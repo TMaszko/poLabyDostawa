@@ -21,4 +21,6 @@ const PracownikDzialuZaopatrzeniaSchema = new Schema({
 
 })
 
+
+
 module.exports = mongoose.model('PracownikDzialuSprzedazy', PracownikDzialuSprzedazySchema);

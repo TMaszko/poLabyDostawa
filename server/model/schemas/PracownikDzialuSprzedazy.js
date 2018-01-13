@@ -16,5 +16,9 @@ const PracownikDzialuSprzedazySchema = new Schema({
 	}
 
 })
-
+PracownikDzialuSprzedazySchema.statics = {
+	getOneEmployee() {
+		return this.findOne().exec()
+	}
+}
 module.exports = mongoose.model('PracownikDzialuSprzedazy', PracownikDzialuSprzedazySchema);

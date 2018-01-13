@@ -24,8 +24,12 @@ const TowarSchema = new Schema({
 
 TowarSchema.statics = {
 	saveWare(ware) {
-		ware.magazyn = magazynID;
-		return this.save(ware).exec()
+		ware.magazyn  = magazynID;
+		const wareWithWareHouseId = new this(ware);
+		return wareWithWareHouseId.save();
+	},
+	getAll() {
+		return this.find().exec();
 	}
 }
 
