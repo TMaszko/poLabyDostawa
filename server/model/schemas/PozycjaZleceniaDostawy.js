@@ -11,7 +11,7 @@ const PozycjaZleceniaDostawySchema = new Schema({
 	},
 	zlecenieDostawy: {
 		type: Schema.ObjectId,
-		ref: 'Zlecenie Dostawy'
+		ref: 'ZlecenieDostawy'
 	}
 })
 

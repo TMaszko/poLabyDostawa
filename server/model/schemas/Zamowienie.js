@@ -31,6 +31,15 @@ ZamowienieSchema.statics = {
 		const today = new Date(year, month, day).valueOf();
 		const tomorrow = Math.floor(new Date(year, month, day + 1).valueOf());
 		return this.find({dataZlozenia:{ "$gte": today , "$lt": tomorrow}}).count().exec();
+	},
+	getOrdersFromToday() {
+	const now = new Date();
+	const day = now.getDate();
+	const year = now.getFullYear();
+	const month = now.getMonth();
+	const today = new Date(year, month, day).valueOf();
+	const tomorrow = Math.floor(new Date(year, month, day + 1).valueOf());
+	return this.find({dataZlozenia:{ "$gte": today , "$lt": tomorrow}}).exec();
 	}
 }
 
