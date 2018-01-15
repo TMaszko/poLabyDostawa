@@ -1,0 +1,17 @@
+.buttonMainOptions {
+    height: 100px;
+    padding: 0px 15px;
+}
+
+.buttonOrderPos {
+    height: 50px;
+    padding: 0px 15px;
+}
+
+.buttonSpacing {
+    margin-right: 10px;
+}
+
+.buttonDecisionPadding {
+    padding: 0px 100px;
+}

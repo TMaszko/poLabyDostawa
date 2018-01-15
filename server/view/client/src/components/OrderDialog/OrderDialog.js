@@ -9,7 +9,10 @@ class OrderDialog extends Component {
 
     state = {
         selectedId: '',
-        amount: 0
+        amount: 0,
+        allWares:{},
+        waresToSelect:{},
+        orderedPositions:{},
     }
 
     onItemSelected = (selectedItem) => {
@@ -30,30 +33,30 @@ class OrderDialog extends Component {
 
         return (
             <OrderDialogStyle>
-                <Modal heading={this.props.title}>
+                <Modal onClose={this.props.onClose} heading={this.props.title}>
                     <div>
                         <SingleSelect
-                            label='Wybierz towar:'
+                            label='Wybierz towar'
                             appearance='subtle'
                             items={selectItems}
                             onSelected={this.onItemSelected}
                             shouldFitContainer
-                            required
+                            isRequired
                         />
 
                         <FieldTextStateless
-                            type='Number'
-                            label='Podaj ilość [szt]:'
+                            type="Number"
+                            label='Podaj ilość [szt]'
                             shouldFitContainer
                             min={0}
                             required
-                            value={this.state.amount}
+                            value={String(this.state.amount)}
                             onChange={this.onAmountChanged}
                         />
                     </div>
                     <div style={{ marginTop: '20px', marginBottom: '20px', display: 'flex', justifyContent: 'flex-end' }}>
                         <Button
-                            onClick={this.props.onCancel}>
+                            onClick={this.props.onClose}>
                             {this.props.cancelText}
                         </Button>
                         <div style={{ width: '10px' }}/>
