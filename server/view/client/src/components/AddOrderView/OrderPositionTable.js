@@ -13,31 +13,31 @@ const headers = {
 		isSortable: true
 	}))
 }
-const rows = orderedWares.map((orderedWare, i) => ({
+const rows = (onEdit,onDelete,orderedWares) => orderedWares.map((orderedWare, i) => ({
 	cells: [{
-		key: orderedWare.nazwa+'key' + i,
-		content: <div style={{padding: '20px'}}>{orderedWare.nazwa}</div>,
+		key: orderedWare.name+'key' + i,
+		content: <div style={{padding: '20px'}}>{orderedWare.name}</div>,
 	},{
-		key: orderedWare.nazwa+'key2' + i,
-		content: <div style={{padding: '20px'}}>{orderedWare.ilosc}</div>,
+		key: orderedWare.name+'key2' + i,
+		content: <div style={{padding: '20px'}}>{orderedWare.amount}</div>,
 	}, {
-		key: orderedWare.nazwa + 'key3' + i,
+		key: orderedWare.name + 'key3' + i,
 		content:<div style={{padding: '20px'}}>
 			<ButtonGroup>
-				<Button shouldFitContainer className="buttonOrderPos">Edytuj</Button>
+				<Button shouldFitContainer onClick={() => onEdit(orderedWare.id)}className="buttonOrderPos">Edytuj</Button>
 				<div className="buttonSpacing"/>
-				<Button shouldFitContainer className="buttonOrderPos" appearance="danger">Usuń</Button>
+				<Button shouldFitContainer onClick={() => onDelete(orderedWare.id)} className="buttonOrderPos" appearance="danger">Usuń</Button>
 			</ButtonGroup>
 		</div>
 	}]
 }))
 
 
-const OrderPositionTable = ({}) =>
+const OrderPositionTable = ({onEdit, onDelete, orderedPositions}) =>
 	<div style={{marginTop: '35px', paddingRight: '80px', paddingLeft: '80px'}}>
 		<DynamicTable
 			head={headers}
-			rows={rows}
+			rows={rows(onEdit,onDelete,orderedPositions)}
 		/>
 	</div>
 

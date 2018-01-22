@@ -2,7 +2,7 @@ import styled from 'styled-components';
 
 export default styled.div `
 	display: flex;
-	justify-content: flex-end;
-	margin-top: 150px;
-	margin-right: 50px;
+	position: relative;
+	justify-content: flex-start;
+	margin-left: 150px;
 `

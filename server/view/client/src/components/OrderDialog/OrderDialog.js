@@ -4,30 +4,48 @@ import Button from '@atlaskit/button';
 import Modal from '@atlaskit/modal-dialog';
 import SingleSelect from '@atlaskit/single-select';
 import TextField, { FieldTextStateless } from '@atlaskit/field-text';
+import ErrorMessage from '../AddOrderView/ErrorMessage';
 
 class OrderDialog extends Component {
 
     state = {
-        selectedId: '',
-        amount: 0,
-        allWares:{},
-        waresToSelect:{},
-        orderedPositions:{},
+        selectedValue: this.props.selectedPosToEdit? {name: this.props.selectedPosToEdit.name, id: this.props.selectedPosToEdit.id} : {name: ''},
+        amount: this.props.selectedPosToEdit? this.props.selectedPosToEdit.amount : 0,
+        errors: {
+            ware: null,
+            amount: null,
+        }
     }
 
     onItemSelected = (selectedItem) => {
-        this.setState({selectedId: selectedItem.item.value})
+        this.setState({selectedValue: selectedItem.item.value})
     }
 
     onAmountChanged = (e) => {
         this.setState({amount: Math.abs(e.target.value)})
     }
-
+    onConfirm = (value, warePosId) => {
+        let errors = {}
+        if(!value.selectedValue.id) {
+            errors.ware = 'Prosze wybrać towar'
+        }
+        if(value.amount === 0) {
+            errors.amount = 'Prosze podać ilość większą od 0'
+        }
+        if(Object.keys(errors).length === 0) {
+            this.props.onConfirm(value, warePosId);
+        } else {
+            this.setState({
+                errors
+            })
+        }
+    }
     render() {
-
-        const items = this.props.positions.wares.map((ware) => {
-            return { content: ware.nazwa, value: ware._id }
+        const selectedPosID = this.props.selectedPosToEdit? this.props.selectedPosToEdit.id : '';
+        const items = this.props.positions.map((ware) => {
+            return { content: ware.nazwa, value:{ id: ware._id, name: ware.nazwa} }
         });
+
 
         const selectItems = [{ items: items }];
 
@@ -36,14 +54,16 @@ class OrderDialog extends Component {
                 <Modal onClose={this.props.onClose} heading={this.props.title}>
                     <div>
                         <SingleSelect
+                            placeholder="Proszę wybrać towar..."
                             label='Wybierz towar'
                             appearance='subtle'
+                            defaultSelected={{label: '', content:this.state.selectedValue.name, value:{ name: this.state.selectedValue.name, id: this.state.selectedValue.id}}}
                             items={selectItems}
                             onSelected={this.onItemSelected}
                             shouldFitContainer
                             isRequired
                         />
-
+                        <ErrorMessage>{this.state.errors.ware}</ErrorMessage>
                         <FieldTextStateless
                             type="Number"
                             label='Podaj ilość [szt]'
@@ -53,6 +73,7 @@ class OrderDialog extends Component {
                             value={String(this.state.amount)}
                             onChange={this.onAmountChanged}
                         />
+                        <ErrorMessage>{this.state.errors.amount}</ErrorMessage>
                     </div>
                     <div style={{ marginTop: '20px', marginBottom: '20px', display: 'flex', justifyContent: 'flex-end' }}>
                         <Button
@@ -62,7 +83,7 @@ class OrderDialog extends Component {
                         <div style={{ width: '10px' }}/>
                         <Button
                             appearance='primary'
-                            onClick={() => this.props.onConfirm({ selectedId: this.state.selectedId, amount: this.state.amount})}
+                            onClick={() => this.onConfirm({ selectedValue: this.state.selectedValue, amount: this.state.amount}, selectedPosID)}
                         >
                             {this.props.confirmText}
                         </Button>

@@ -3,8 +3,9 @@ import OrderInfoWrapper from './OrderInfoWrapper';
 import OrderFieldInfo from './OrderFieldInfo';
 import InlineLabel from './InlineLabel';
 import {DatePicker} from '@atlaskit/datetime-picker';
+import ErrorMessage from "./ErrorMessage";
 
-const OrderInfo = ({orderNum, employeeFullName}) =>
+const OrderInfo = ({orderNum, employeeFullName , onChangeDate, dateError }) =>
 	<OrderInfoWrapper>
 		<OrderFieldInfo>
 			<InlineLabel>
@@ -15,8 +16,9 @@ const OrderInfo = ({orderNum, employeeFullName}) =>
 			<InlineLabel>
 				Wybierz termin:
 			</InlineLabel>
-			<DatePicker/>
+			<DatePicker onChange={onChangeDate}/>
 		</OrderFieldInfo>
+		<ErrorMessage>{dateError}</ErrorMessage>
 		<OrderFieldInfo>
 			<InlineLabel>
 				Wystawiający: {employeeFullName}

@@ -14,7 +14,7 @@ class OrderController {
 		Promise.all([employeePromise, waresPromise, todayOrderCounter]).then(([employee, wares, todayOrderCounter]) =>{
 			const name = employee.imie;
 			const surname = employee.nazwisko;
-			res.json({employee: {name, surname}, wares, todayOrderCounter});
+			res.json({employee , wares, todayOrderCounter});
 		})
 
 	}
@@ -26,14 +26,14 @@ class OrderController {
 		const { orderPositions, orderNumber, salesEmployeeID, dateOfOrder} = req.body;
 		const order = new Order({
 			_id: new mongoose.Types.ObjectId(),
-			nrZamowienia: orderNumber,
+			nrZamowienia: orderNumber + new mongoose.Types.ObjectId().toString(),
 			termin: dateOfOrder,
-			pracownikDzialuSprzedazy: mongoose.Types.ObjectId()
+			pracownikDzialuSprzedazy: mongoose.Types.ObjectId(salesEmployeeID)
 		})
 		order.save().then(res => {
 			const orderPositionsPromises = orderPositions.map(orderPos => {
 				return new OrderPosition({
-					towar: mongoose.Types.ObjectId(),
+					towar: mongoose.Types.ObjectId(orderPos.id),
 					ilosc: orderPos.amount,
 					zamowienie: order._id
 				}).save()

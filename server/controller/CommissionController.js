@@ -13,7 +13,10 @@ const flatten = arr => arr.reduce((acc, curr) => acc.concat(curr),[]);
 class CommissionController {
 	getAddCommissionDeliverers(req, res, next) {
 		const orders = Order.getOrdersFromToday()
-		orders.then(orders => Promise.all(orders.map(order => OrderPosition.find({zamowienie: order._id}).exec())))
+		orders.then(orders => {
+			let dateOfCommission = Math.min.apply(null, orders.map(order => order.termin));
+			Commission.getCommissionsCountFromToday().then(commissionCounter =>
+			Promise.all(orders.map(order => OrderPosition.find({zamowienie: order._id}).exec()))
 			.then(flatten)
 			.then(positions => Promise.all(positions.map(pos => SuppliedWare.find({towar: pos.towar}).populate('dostawca').exec())))
 			.then(flatten)
@@ -22,9 +25,10 @@ class CommissionController {
 				const deliverersUnique = deliverers.reduce((acc, curr) => {
 					acc[curr._id] = curr;
 					return acc;
-				},{});
-				res.json({deliverers: deliverersUnique});
-			})
+				}, {});
+				res.json({deliverers: deliverersUnique, dateOfCommission, commissionCounter});
+			}))
+		})
 	}
 	addCommission(req, resToClient, next) {
 		console.log(req.body.positionIds);
@@ -36,7 +40,7 @@ class CommissionController {
 		const {commissionPositions, commissionNumber, supplierEmployeeID, dateOfCommission, deliverer, positionIds} = req.body;
 		const commission = new Commission({
 			_id: new mongoose.Types.ObjectId(),
-			dostawca: new mongoose.Types.ObjectId(),
+			dostawca: mongoose.Types.ObjectId(deliverer),
 			cenaZlecenia: commissionPositions.map(commissionPos => commissionPos.price).reduce((acc, curr) => acc + curr, 0),
 			nrZlecenia: commissionNumber + new mongoose.Types.ObjectId().toString(),
 			termin: dateOfCommission,
@@ -46,7 +50,7 @@ class CommissionController {
 			const commissionPositionsPromises = commissionPositions.map(commissionPos => {
 				const commissionPosition = new CommissionPosition({
 					_id: new mongoose.Types.ObjectId(),
-					zlecenieDostawy: new mongoose.Types.ObjectId(),
+					zlecenieDostawy: commission._id,
 					cena: commissionPos.price,
 					ilosc: commissionPos.amount,
 				});

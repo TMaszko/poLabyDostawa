@@ -21,8 +21,6 @@ class WareController {
 		SuppliedWare.getDelivererWares(req.params.deliverer)
 		.then(wares => Order.getOrdersFromToday()
 			.then(orders => {
-				Commission.getCommissionsCountFromToday().then(commissionNumber => {
-					let dateOfCommission = Math.min.apply(null, orders.map(order => order.termin))
 					Promise.all(orders.map(order => OrderPosition.find({zamowienie: order._id}).exec()))
 					.then(flatten)
 					.then(positions =>
@@ -34,6 +32,7 @@ class WareController {
 							})
 						))
 					.then(delivererPositions => {
+
 							return {
 								groupedWares: delivererPositions.reduce((acc, curr) => {
 									acc[curr.ware.towar.toString()] = acc[curr.ware.towar.toString()] || {
@@ -53,6 +52,7 @@ class WareController {
 						}
 					)
 					.then(({ positionIds ,groupedWares}) => {
+						console.log(groupedWares)
 						const waresOrderedToday = Object.keys(groupedWares);
 						return {
 							waresOnlyFromPositions: wares
@@ -64,13 +64,12 @@ class WareController {
 										price: wareWithPrice.price
 									})
 							}),
-							positionIds
+							positionIds,
 						}
 					})
 					.then(({waresOnlyFromPositions, positionIds}) => {
-						res.json({wares: waresOnlyFromPositions, dateOfCommission, commissionCounter: commissionNumber, positionIds});
+						res.json({wares: waresOnlyFromPositions, positionIds});
 					})
-				})
 			})
 		)
 	}
